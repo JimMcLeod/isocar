@@ -7,11 +7,16 @@ BasicGame.Boot = function (game) { };
 var isoGroup, player,
 	directionTable, playerDirection,
 	keyDelay, keyDelayRefresh,
-	speed, topSpeed;
+	speed, topSpeed,
+	leftButton, rightButton, pressed;
 
 BasicGame.Boot.prototype =
 {
     preload: function () {
+    	game.load.image('leftArrow', 'img/left.png');
+    	game.load.image('rightArrow', 'img/right.png');
+    	game.load.image('button', 'img/forward.png');
+
         game.load.image('cube', 'img/big-cube.png');
 		game.load.spritesheet('police', 'img/big-police.png', 64, 54);
 
@@ -41,7 +46,7 @@ BasicGame.Boot.prototype =
         game.physics.isoArcade.gravity.setTo(0, 0, -500);
 
 		playerDirection = 0;
-		keyDelay = 10; keyDelayRefresh = keyDelay;
+		keyDelay = 14; keyDelayRefresh = keyDelay;
 
 		directionTable = [
 			{ x:0.6 , y:-0.6 },
@@ -61,28 +66,28 @@ BasicGame.Boot.prototype =
                 // Create a cube using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
                 cube = game.add.isoSprite(xx, yy, 0, 'cube', 0, isoGroup);
-                cube1 = game.add.isoSprite(xx, yy, 64, 'cube', 1, isoGroup);
+                //cube1 = game.add.isoSprite(xx, yy, 64, 'cube', 1, isoGroup);
 
                 cube.anchor.set(0.5);
-                cube1.anchor.set(0.5);
+                //cube1.anchor.set(0.5);
 
                 // Enable the physics body on this cube.
                 game.physics.isoArcade.enable(cube);
-                game.physics.isoArcade.enable(cube1);
+                //game.physics.isoArcade.enable(cube1);
 
                 // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
                 cube.body.collideWorldBounds = true;
-                cube1.body.collideWorldBounds = true;
+                //cube1.body.collideWorldBounds = true;
 
 				cube.body.immovable = true;
-				cube1.body.immovable = true;
+				//cube1.body.immovable = true;
                 // Add a full bounce on the x and y axes, and a bit on the z axis.
                 //cube.body.bounce.set(1, 1, 0.2);
                 //cube1.body.bounce.set(1, 1, 0.2);
 
                 // Add some X and Y drag to make cubes slow down after being pushed.
                 cube.body.drag.set(100, 100, 0);
-                cube1.body.drag.set(100, 100, 0);
+                //cube1.body.drag.set(100, 100, 0);
             }
         }
 
@@ -112,19 +117,30 @@ BasicGame.Boot.prototype =
 
         // Make the camera follow the player.
         game.camera.follow(player);
+
+        var leftArrow = game.add.image(0, 300, 'leftArrow');
+        leftArrow.fixedToCamera = true;
+        var rightArrow = game.add.image(100, 300, 'rightArrow');
+        rightArrow.fixedToCamera = true;
+        var accelButton = game.add.image(700, 300, 'button');
+        accelButton.fixedToCamera = true;
+
+        game.input.onDown.add(this.pointerDown, this);
+        game.input.onUp.add(this.pointerUp, this);
     },
+
     update: function () {
         // Move the player at this speed.
 		var frame;
 
-        if (this.cursors.left.isDown) {
+        if (this.cursors.left.isDown || leftButton) {
         	if (keyDelay === 0) {
             	playerDirection--;
             	keyDelay = keyDelayRefresh;
         	}
         	keyDelay--;
         }
-        else if (this.cursors.right.isDown) {
+        else if (this.cursors.right.isDown || rightButton) {
 			if (keyDelay === 0) {
 				playerDirection++;
 				keyDelay = keyDelayRefresh;
@@ -136,7 +152,7 @@ BasicGame.Boot.prototype =
 
 		playerDirection = playerDirection & 7;
 
-		if (this.cursors.up.isDown) {
+		if (this.cursors.up.isDown || pressed) {
 			if (speed < topSpeed) {
 				speed += 8;
 			}
@@ -155,12 +171,44 @@ BasicGame.Boot.prototype =
 
         player.frame = playerDirection;
     },
+
+	pointerDown: function (pressedButton) {
+		var x = pressedButton.x;
+		var y = pressedButton.y;
+		if (y > 300) {
+			if (x > 700 && x < 800) {
+				pressed = true;
+			}
+			if (x < 100) {
+				leftButton = true;
+			}
+			if (x > 100 && x < 200) {
+				rightButton = true;
+			}
+		}
+	},
+	pointerUp: function (pressedButton) {
+		var x = pressedButton.x;
+		var y = pressedButton.y;
+		if (y > 300) {
+			if (x > 700 && x < 800) {
+				pressed = false;
+			}
+			if (x < 100) {
+				leftButton = false;
+			}
+			if (x > 100 && x < 200) {
+				rightButton = false;
+			}
+		}
+	},
+
     render: function () {
-        game.debug.text("Move with cursors, jump with space!", 2, 36, "#ffffff");
+        /*game.debug.text("Move with cursors, jump with space!", 2, 36, "#ffffff");
         game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
         game.debug.text("X table:" + directionTable[playerDirection].x, 2, 50, "#a7aebe");
         game.debug.text("Y table:" + directionTable[playerDirection].y, 2, 70, "#a7aebe");
-        game.debug.text("Speed:" + speed, 2, 90, "#a7aebe");
+        game.debug.text("Speed:" + speed, 2, 90, "#a7aebe");*/
     }
 };
 

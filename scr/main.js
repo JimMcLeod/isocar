@@ -42,13 +42,13 @@ BasicGame.Boot.prototype =
 		keyDelay = 10; keyDelayRefresh = keyDelay;
 
 		directionTable = [
-			{ x:0.5 , y:-0.5 },
+			{ x:0.6 , y:-0.6 },
 			{ x:1, y:0 },
-			{ x:0.5, y:0.5 },
+			{ x:0.6, y:0.6 },
 			{ x:0, y:1 },
-			{ x:-0.5, y:0.5 },
+			{ x:-0.6, y:0.6 },
 			{ x:-1, y:0 },
-			{ x:-0.5, y:-0.5 },
+			{ x:-0.6, y:-0.6 },
 			{ x:0, y:-1 },
 		];
 
@@ -68,7 +68,7 @@ BasicGame.Boot.prototype =
                 cube.body.collideWorldBounds = true;
 
                 // Add a full bounce on the x and y axes, and a bit on the z axis.
-                cube.body.bounce.set(1, 1, 0.2);
+                //cube.body.bounce.set(1, 1, 0.2);
 
                 // Add some X and Y drag to make cubes slow down after being pushed.
                 cube.body.drag.set(100, 100, 0);
@@ -108,20 +108,20 @@ BasicGame.Boot.prototype =
 		var frame;
 
         if (this.cursors.left.isDown) {
-        	keyDelay--;
         	if (keyDelay === 0) {
             	playerDirection--;
             	keyDelay = keyDelayRefresh;
         	}
+        	keyDelay--;
         }
         else if (this.cursors.right.isDown) {
-            keyDelay--;
 			if (keyDelay === 0) {
 				playerDirection++;
 				keyDelay = keyDelayRefresh;
 			}
+            keyDelay--;
         } else {
-        	keyDelay = keyDelayRefresh;
+        	keyDelay = 0;
         }
 
 		playerDirection = playerDirection & 7;

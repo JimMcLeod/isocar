@@ -6,13 +6,14 @@ BasicGame.Boot = function (game) { };
 
 var isoGroup, player,
 	directionTable, playerDirection,
-	keyDelay, keyDelayRefresh;
+	keyDelay, keyDelayRefresh,
+	speed, topSpeed;
 
 BasicGame.Boot.prototype =
 {
     preload: function () {
-        game.load.image('cube', 'img/cube.png');
-		game.load.spritesheet('police', 'img/police.png', 32, 27);
+        game.load.image('cube', 'img/big-cube.png');
+		game.load.spritesheet('police', 'img/big-police.png', 64, 54);
 
         game.time.advancedTiming = true;
 
@@ -32,6 +33,7 @@ BasicGame.Boot.prototype =
         game.iso.anchor.setTo(0.5, 0);
     },
     create: function () {
+    	speed = 0; topSpeed = 256;
         // Create a group for our tiles, so we can use Group.sort
         isoGroup = game.add.group();
 
@@ -53,25 +55,34 @@ BasicGame.Boot.prototype =
 		];
 
         // Let's make a load of cubes on a grid, but do it back-to-front so they get added out of order.
-        var cube;
+        var cube, cube1;
         for (var xx = 1024; xx > 0; xx -= 140) {
             for (var yy = 1024; yy > 0; yy -= 140) {
                 // Create a cube using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
                 cube = game.add.isoSprite(xx, yy, 0, 'cube', 0, isoGroup);
+                cube1 = game.add.isoSprite(xx, yy, 64, 'cube', 1, isoGroup);
+
                 cube.anchor.set(0.5);
+                cube1.anchor.set(0.5);
 
                 // Enable the physics body on this cube.
                 game.physics.isoArcade.enable(cube);
+                game.physics.isoArcade.enable(cube1);
 
                 // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
                 cube.body.collideWorldBounds = true;
+                cube1.body.collideWorldBounds = true;
 
+				cube.body.immovable = true;
+				cube1.body.immovable = true;
                 // Add a full bounce on the x and y axes, and a bit on the z axis.
                 //cube.body.bounce.set(1, 1, 0.2);
+                //cube1.body.bounce.set(1, 1, 0.2);
 
                 // Add some X and Y drag to make cubes slow down after being pushed.
                 cube.body.drag.set(100, 100, 0);
+                cube1.body.drag.set(100, 100, 0);
             }
         }
 
@@ -104,7 +115,6 @@ BasicGame.Boot.prototype =
     },
     update: function () {
         // Move the player at this speed.
-        var speed = 100;
 		var frame;
 
         if (this.cursors.left.isDown) {
@@ -125,11 +135,17 @@ BasicGame.Boot.prototype =
         }
 
 		playerDirection = playerDirection & 7;
+
 		if (this.cursors.up.isDown) {
-			speed = 100;
+			if (speed < topSpeed) {
+				speed += 8;
+			}
 		} else {
-			speed = 0;
+			if (speed > 0) {
+				speed -= 8;
+			}
 		}
+
 		player.body.velocity.x = directionTable[playerDirection].x * speed;
 		player.body.velocity.y = directionTable[playerDirection].y * speed;
 
@@ -144,6 +160,7 @@ BasicGame.Boot.prototype =
         game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
         game.debug.text("X table:" + directionTable[playerDirection].x, 2, 50, "#a7aebe");
         game.debug.text("Y table:" + directionTable[playerDirection].y, 2, 70, "#a7aebe");
+        game.debug.text("Speed:" + speed, 2, 90, "#a7aebe");
     }
 };
 

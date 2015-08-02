@@ -1,14 +1,15 @@
-var game = new Phaser.Game(800, 400, Phaser.AUTO, 'ISO', null, true, false);
+var screenWidth = 800, screenHeight = 400;
+var game = new Phaser.Game(screenWidth, screenHeight, Phaser.AUTO, 'ISO', null, true, false);
 
 var BasicGame = function (game) { };
-
 BasicGame.Boot = function (game) { };
 
 var isoGroup, player,
 	directionTable, playerDirection,
 	keyDelay, keyDelayRefresh,
 	speed, topSpeed,
-	leftButton, rightButton, pressed;
+	left, right, accel,
+	leftArrow, rightArrow, accelButton;
 
 BasicGame.Boot.prototype =
 {
@@ -118,11 +119,11 @@ BasicGame.Boot.prototype =
         // Make the camera follow the player.
         game.camera.follow(player);
 
-        var leftArrow = game.add.image(0, 300, 'leftArrow');
+        leftArrow = game.add.image(0, 300, 'leftArrow');
         leftArrow.fixedToCamera = true;
-        var rightArrow = game.add.image(100, 300, 'rightArrow');
+        rightArrow = game.add.image(100, 300, 'rightArrow');
         rightArrow.fixedToCamera = true;
-        var accelButton = game.add.image(700, 300, 'button');
+        accelButton = game.add.image(700, 300, 'button');
         accelButton.fixedToCamera = true;
 
         game.input.onDown.add(this.pointerDown, this);
@@ -133,14 +134,14 @@ BasicGame.Boot.prototype =
         // Move the player at this speed.
 		var frame;
 
-        if (this.cursors.left.isDown || leftButton) {
+        if (this.cursors.left.isDown || left) {
         	if (keyDelay === 0) {
             	playerDirection--;
             	keyDelay = keyDelayRefresh;
         	}
         	keyDelay--;
         }
-        else if (this.cursors.right.isDown || rightButton) {
+        else if (this.cursors.right.isDown || right) {
 			if (keyDelay === 0) {
 				playerDirection++;
 				keyDelay = keyDelayRefresh;
@@ -152,7 +153,7 @@ BasicGame.Boot.prototype =
 
 		playerDirection = playerDirection & 7;
 
-		if (this.cursors.up.isDown || pressed) {
+		if (this.cursors.up.isDown || accel) {
 			if (speed < topSpeed) {
 				speed += 8;
 			}
@@ -172,33 +173,33 @@ BasicGame.Boot.prototype =
         player.frame = playerDirection;
     },
 
-	pointerDown: function (pressedButton) {
-		var x = pressedButton.x;
-		var y = pressedButton.y;
-		if (y > 300) {
-			if (x > 700 && x < 800) {
-				pressed = true;
+	pointerDown: function (event) {
+		var x = event.x;
+		var y = event.y;
+		if (y > screenHeight - accelButton.height) {
+			if (x > accelButton.cameraOffset.x && x < accelButton.cameraOffset.x + accelButton.width) {
+				accel = true;
 			}
-			if (x < 100) {
-				leftButton = true;
+			if (x > leftArrow.cameraOffset.x && x < leftArrow.cameraOffset.x + leftArrow.width) {
+				left = true;
 			}
-			if (x > 100 && x < 200) {
-				rightButton = true;
+			if (x > rightArrow.cameraOffset.x && x < rightArrow.cameraOffset.x + rightArrow.width) {
+				right = true;
 			}
 		}
 	},
-	pointerUp: function (pressedButton) {
-		var x = pressedButton.x;
-		var y = pressedButton.y;
-		if (y > 300) {
-			if (x > 700 && x < 800) {
-				pressed = false;
+	pointerUp: function (event) {
+		var x = event.x;
+		var y = event.y;
+		if (y > screenHeight - accelButton.height) {
+			if (x > accelButton.cameraOffset.x && x < accelButton.cameraOffset.x + accelButton.width) {
+				accel = false;
 			}
-			if (x < 100) {
-				leftButton = false;
+			if (x > leftArrow.cameraOffset.x && x < leftArrow.cameraOffset.x + leftArrow.width) {
+				left = false;
 			}
-			if (x > 100 && x < 200) {
-				rightButton = false;
+			if (x > rightArrow.cameraOffset.x && x < rightArrow.cameraOffset.x + rightArrow.width) {
+				right = false;
 			}
 		}
 	},

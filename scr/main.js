@@ -3,6 +3,7 @@ var game = new Phaser.Game(screenWidth, screenHeight, Phaser.AUTO, 'ISO', null, 
 
 var BasicGame = function (game) { };
 BasicGame.Boot = function (game) { };
+BasicGame.Title = function (game) { };
 BasicGame.Main = function (game) { };
 
 var isoGroup, player,
@@ -186,8 +187,24 @@ BasicGame.Main.prototype = {
     }
 };
 
+BasicGame.Title.prototype = {
+	create: function () {
+		this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+		this.scale.refresh();
+		var title = game.add.image(0, 0, 'title');
+		title.inputEnabled = true;
+
+		var tapped = function () {
+			game.state.start('Main');
+		}
+		game.input.onDown.add(tapped, this);
+	},
+};
+
 BasicGame.Boot.prototype = {
 	preload: function () {
+		game.load.image('title', 'img/title.png');
+
 		game.load.image('leftArrow', 'img/left.png');
 		game.load.image('rightArrow', 'img/right.png');
 		game.load.image('button', 'img/forward.png');
@@ -214,10 +231,11 @@ BasicGame.Boot.prototype = {
 	},
 
 	create: function () {
-		game.state.start('Main');
+		game.state.start('Title');
 	}
-}
+};
 
 game.state.add('Boot', BasicGame.Boot);
+game.state.add('Title', BasicGame.Title);
 game.state.add('Main', BasicGame.Main);
 game.state.start('Boot');

@@ -45,28 +45,23 @@ BasicGame.Main.prototype = {
                 // Create a cube using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
                 cube = game.add.isoSprite(xx, yy, 0, 'cube', 0, isoGroup);
-                //cube1 = game.add.isoSprite(xx, yy, 64, 'cube', 1, isoGroup);
 
-                cube.anchor.set(0.5);
-                //cube1.anchor.set(0.5);
+                cube.anchor.set(0.5);;
 
                 // Enable the physics body on this cube.
                 game.physics.isoArcade.enable(cube);
-                //game.physics.isoArcade.enable(cube1);
 
                 // Collide with the world bounds so it doesn't go falling forever or fly off the screen!
                 cube.body.collideWorldBounds = true;
-                //cube1.body.collideWorldBounds = true;
 
 				cube.body.immovable = true;
-				//cube1.body.immovable = true;
+
                 // Add a full bounce on the x and y axes, and a bit on the z axis.
                 //cube.body.bounce.set(1, 1, 0.2);
                 //cube1.body.bounce.set(1, 1, 0.2);
 
                 // Add some X and Y drag to make cubes slow down after being pushed.
                 cube.body.drag.set(100, 100, 0);
-                //cube1.body.drag.set(100, 100, 0);
             }
         }
 

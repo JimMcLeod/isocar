@@ -3,6 +3,7 @@ var game = new Phaser.Game(screenWidth, screenHeight, Phaser.AUTO, 'ISO', null, 
 
 var BasicGame = function (game) { };
 BasicGame.Boot = function (game) { };
+BasicGame.Main = function (game) { };
 
 var isoGroup, player,
 	directionTable, playerDirection,
@@ -11,34 +12,11 @@ var isoGroup, player,
 	left, right, accel,
 	leftArrow, rightArrow, accelButton;
 
-BasicGame.Boot.prototype =
-{
-    preload: function () {
-    	game.load.image('leftArrow', 'img/left.png');
-    	game.load.image('rightArrow', 'img/right.png');
-    	game.load.image('button', 'img/forward.png');
-
-        game.load.image('cube', 'img/big-cube.png');
-		game.load.spritesheet('police', 'img/big-police.png', 64, 54);
-
-        game.time.advancedTiming = true;
-
-        // Add and enable the plug-in.
-        game.plugins.add(new Phaser.Plugin.Isometric(game));
-
-        // In order to have the camera move, we need to increase the size of our world bounds.
-        game.world.setBounds(0, 0, 2048, 1024);
-
-        // Start the IsoArcade physics system.
-        game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-
-        // This is used to set a game canvas-based offset for the 0, 0, 0 isometric coordinate - by default
-        // this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
-        // When using camera following, it's best to keep the Y anchor set to 0, which will let the camera
-        // cover the full size of your world bounds.
-        game.iso.anchor.setTo(0.5, 0);
-    },
+BasicGame.Main.prototype = {
     create: function () {
+    	this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+		this.scale.refresh();
+
     	speed = 0; topSpeed = 256;
         // Create a group for our tiles, so we can use Group.sort
         isoGroup = game.add.group();
@@ -213,5 +191,38 @@ BasicGame.Boot.prototype =
     }
 };
 
+BasicGame.Boot.prototype = {
+	preload: function () {
+		game.load.image('leftArrow', 'img/left.png');
+		game.load.image('rightArrow', 'img/right.png');
+		game.load.image('button', 'img/forward.png');
+
+		game.load.image('cube', 'img/big-cube.png');
+		game.load.spritesheet('police', 'img/big-police.png', 64, 54);
+
+		game.time.advancedTiming = true;
+
+		// Add and enable the plug-in.
+		game.plugins.add(new Phaser.Plugin.Isometric(game));
+
+		// In order to have the camera move, we need to increase the size of our world bounds.
+		game.world.setBounds(0, 0, 2048, 1024);
+
+		// Start the IsoArcade physics system.
+		game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+
+		// This is used to set a game canvas-based offset for the 0, 0, 0 isometric coordinate - by default
+		// this point would be at screen coordinates 0, 0 (top left) which is usually undesirable.
+		// When using camera following, it's best to keep the Y anchor set to 0, which will let the camera
+		// cover the full size of your world bounds.
+		game.iso.anchor.setTo(0.5, 0);
+	},
+
+	create: function () {
+		game.state.start('Main');
+	}
+}
+
 game.state.add('Boot', BasicGame.Boot);
+game.state.add('Main', BasicGame.Main);
 game.state.start('Boot');

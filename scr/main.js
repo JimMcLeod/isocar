@@ -68,7 +68,7 @@ BasicGame.Main.prototype = {
 
         // Create another cube as our 'player', and set it up just like the cubes above.
         player = game.add.isoSprite(128, 128, 0, 'police', 0, isoGroup);
-        player.tint = 0x86bfda;
+        //player.tint = 0x86bfda;
         player.anchor.set(0.5);
         game.physics.isoArcade.enable(player);
         player.body.collideWorldBounds = true;

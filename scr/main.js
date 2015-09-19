@@ -47,7 +47,7 @@ BasicGame.Main.prototype = {
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
                 cube = game.add.isoSprite(xx, yy, 0, 'cube', 0, isoGroup);
 
-                cube.anchor.set(0.5);;
+                cube.anchor.set(0.5);
 
                 // Enable the physics body on this cube.
                 game.physics.isoArcade.enable(cube);
@@ -65,7 +65,15 @@ BasicGame.Main.prototype = {
                 cube.body.drag.set(100, 100, 0);
             }
         }
+		for (var xx = 1024; xx > 0; xx -= 35) {
+			for (var yy = 1024; yy > 0; yy -= 35) {
+				// Create a cube using the new game.add.isoSprite factory method at the specified position.
+				// The last parameter is the group you want to add it to (just like game.add.sprite)
+				cube = game.add.isoSprite(xx, yy, -70, 'cube', 0, isoGroup);
 
+				cube.anchor.set(0.5);
+			}
+		}
         // Create another cube as our 'player', and set it up just like the cubes above.
         player = game.add.isoSprite(128, 128, 0, 'police', 0, isoGroup);
         //player.tint = 0x86bfda;
